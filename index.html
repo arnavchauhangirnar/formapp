@@ -1,10 +1,900 @@
 <!DOCTYPE html>
 <html>
-<head><title>thispage</title>
+
 <head>
-  <body>
-    <p>hi</p>
-  </body>
+  <base target="_top">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=1">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet" />
+  <!-- Add Select2 CSS -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+  <!-- Add jQuery (Select2 depends on jQuery) -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <!-- Add Select2 JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+
+  <style>
+    /* Adjust textbox size & styling */
+    #citySelect,
+    #carSelect {
+      width: 100%;
+      /* Takes full width of the container */
+      max-width: 800px;
+      /* Increase this if you'd like a wider box */
+      padding: 10px;
+      font-size: 1rem;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    /* Reset & full height */
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 25px;
+      /* Global base size */
+    }
+
+    /*************************************************
+     * PAGE LAYOUT:
+     *************************************************/
+    .topOrangeSegment {
+      background-color: #FF991C;
+      /* orange */
+      min-height: 15vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .topOrangeSegment img {
+      height: 40px;
+      width: auto;
+    }
+
+    .middleWhiteSegment {
+      background-color: #FFE5B5;
+      min-height: 70vh;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
+    .bottomOrangeSegment {
+      background-color: #FF991C;
+      min-height: 15vh;
+      color: #fff;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
+    .container {
+      max-width: 700px;
+      margin: 0 auto;
+      /* padding: 20px;
+      background-color: #f9f9f9;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      margin-bottom: 30px; */
+    }
+
+    h2,
+    .section-title {
+      font-family: 'Montserrat', sans-serif;
+      text-align: center;
+    }
+
+    .section-title {
+      margin-top: 20px;
+      margin-bottom: 10px;
+      font-size: 1.2rem;
+    }
+
+    /*************************************************
+     * PAGES: Show/Hide
+     *************************************************/
+    .page {
+      display: none;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    /* Buttons */
+    button {
+      background-color: #FF991C;
+      border: none;
+      font-size: 1.2rem;
+      padding: 12px 24px;
+      cursor: pointer;
+      margin-top: 10px;
+      width: 100%;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #e68a00;
+    }
+
+    #submitBtn {
+      display: none;
+      /* hidden until pairs are completed */
+    }
+
+    /*************************************************
+     * PAGE 9 (Features): Smaller Font
+     *************************************************/
+    #page9 {
+      font-size: 0.8em;
+      /* 80% => ~20px on bigger screens */
+    }
+
+    .featureBlocks {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+      /* spacing between columns */
+    }
+
+    .featureBlock {
+      flex: 1;
+      min-width: 200px;
+      /* adjust if needed */
+    }
+
+    .option-label {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+      cursor: pointer;
+      transition: background-color 0.3s ease, border-color 0.3s ease;
+      padding: 5px;
+      border-radius: 5px;
+    }
+
+    .option-label-checkbox {
+      transform: scale(1.1);
+      margin-right: 10px;
+      cursor: pointer;
+    }
+
+    .option-label-number {
+      width: 45px;
+      text-align: right;
+      margin-right: 10px;
+      font-weight: bold;
+    }
+
+    .option-label-text {
+      flex: 1;
+      text-align: left;
+      font-size: 0.8rem;
+    }
+
+    /*************************************************
+     * PAGE 10 (Pairwise):
+     *************************************************/
+    .question-container {
+      margin: 20px 0;
+      border-top: 1px solid #ccc;
+      padding-top: 10px;
+    }
+
+    .question-container p,
+    .question-container label {
+      margin-bottom: 10px;
+    }
+
+    .question-container label {
+      display: flex;
+      gap: 10px;
+      align-items: baseline;
+    }
+
+    input[type="radio"] {
+      transform: scale(1.3);
+      margin-right: 5px;
+      cursor: pointer;
+    }
+
+    label {
+      padding: 0.5rem;
+      border: 1px solid gray;
+      display: block;
+      border-radius: 0.5rem;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    label:hover,
+    label:has(input:checked) {
+      background-color: #FF991C;
+      border-color: #FF991C;
+      color: #fff;
+    }
+
+    label:has(input:disabled) {
+      color: gray;
+      border-color: gray;
+      cursor: not-allowed;
+    }
+
+    #countText {
+      margin-bottom: 10px;
+    }
+
+    @media (max-width: 600px) {
+
+      html,
+      body {
+        font-size: 20px;
+      }
+
+      h2 {
+        font-size: 1.5rem;
+      }
+
+      .section-title {
+        font-size: 1rem;
+      }
+
+      .option-label-number {
+        width: 24px;
+      }
+
+      button {
+        font-size: 1em;
+      }
+
+      #page9 {
+        font-size: 0.7em;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- TOP ORANGE SEGMENT -->
+  <div class="topOrangeSegment">
+    <img src="https://stimg.cardekho.com/pwa/img/carDekho-newLogo.svg" alt="Top Center Image" />
+  </div>
+
+  <!-- MIDDLE WHITE SEGMENT -->
+  <div class="middleWhiteSegment">
+    <div class="container">
+      <!-- PAGE 1: Age -->
+      <div id="page1" class="page active">
+        <fieldset>
+          <legend class="section-title">What is your age group?</legend>
+          <label><input type="radio" name="age" value="18-24"> 18-24</label><br>
+          <label><input type="radio" name="age" value="25-34"> 25-34</label><br>
+          <label><input type="radio" name="age" value="35-44"> 35-44</label><br>
+          <label><input type="radio" name="age" value="45-54"> 45-54</label><br>
+          <label><input type="radio" name="age" value="55-64"> 55-64</label><br>
+          <label><input type="radio" name="age" value="65+"> 65+</label><br><br>
+          <button onclick="nextFromAge()">Next &raquo;</button>
+        </fieldset>
+      </div>
+
+      <!-- PAGE 2: Gender -->
+      <div id="page2" class="page">
+        <fieldset>
+          <legend class="section-title">What is your gender?</legend>
+          <label><input type="radio" name="gender" value="Male"> Male</label><br>
+          <label><input type="radio" name="gender" value="Female"> Female</label><br>
+          <label><input type="radio" name="gender" value="Other"> Other</label><br><br>
+          <button onclick="nextFromGender()">Next &raquo;</button>
+        </fieldset>
+      </div>
+
+      <!-- PAGE 3: Region -->
+      <div id="page3" class="page">
+        <fieldset>
+          <legend class="section-title">Current City of Residence?</legend>
+          <select name="city" id="citySelect">
+            <option value="" disabled selected>Select your city</option>
+            <option value="Aahva">Aahva</option>
+            <option value="Abohar">Abohar</option>
+            <option value="Abu Road">Abu Road</option>
+            <option value="Achalpur">Achalpur</option>
+            <option value="Achanta">Achanta</option>
+            <option value="Achrol">Achrol</option>
+            <option value="Addakurukki">Addakurukki</option>
+            <option value="Addanki">Addanki</option>
+            <option value="Adhe kh.">Adhe kh.</option>
+            <option value="Zaheerabad">Zaheerabad</option>
+            <option value="Zalod">Zalod</option>
+            <option value="Zamania">Zamania</option>
+            <option value="Zanzroli">Zanzroli</option>
+            <option value="Zira">Zira</option>
+            <option value="Zunheboto">Zunheboto</option>
+            <!-- Add as many as you need -->
+          </select>
+          <br><br>
+          <button onclick="nextFromCity()">Next &raquo;</button>
+        </fieldset>
+      </div>
+
+      <!-- PAGE 4: Buying This Year? -->
+      <div id="page4" class="page">
+        <fieldset>
+          <legend class="section-title">Are you planning to buy a car this year?</legend>
+          <label><input type="radio" name="buyingThisYear" value="Yes"> Yes</label><br>
+          <label><input type="radio" name="buyingThisYear" value="No"> No</label><br><br>
+          <button onclick="checkBuyingThisYear()">Next &raquo;</button>
+        </fieldset>
+      </div>
+
+      <!-- PAGE ThankYou (shown if user selects NO) -->
+      <div id="pageThankYou" class="page">
+        <div class="section-title">Thank you!</div>
+        <p style="text-align:center;">
+          You have indicated you are not buying this year. The survey is complete.
+        </p>
+      </div>
+
+      <!-- PAGE 5: Ownership -->
+      <div id="page5" class="page">
+        <fieldset>
+          <legend class="section-title">Do you currently own or have previously owned a car?</legend>
+          <label><input type="radio" name="owner" value="Yes"> Yes</label><br>
+          <label><input type="radio" name="owner" value="No"> No</label><br><br>
+          <button onclick="nextFromOwner()">Next &raquo;</button>
+        </fieldset>
+      </div>
+
+      <!-- PAGE 6: Budget -->
+      <div id="page6" class="page">
+        <fieldset>
+          <legend class="section-title">What is the budget for your car purchase?</legend>
+          <label><input type="radio" name="budget" value="Up to 10L"> Up to 10L</label><br>
+          <label><input type="radio" name="budget" value="10-20L"> 10-20L</label><br>
+          <label><input type="radio" name="budget" value="20-30L"> 20-30L</label><br>
+          <label><input type="radio" name="budget" value="30-40L"> 30-40L</label><br>
+          <label><input type="radio" name="budget" value="40L+"> 40L+</label><br><br>
+          <button onclick="nextFromBudget()">Next &raquo;</button>
+        </fieldset>
+      </div>
+
+      <!-- PAGE 7: Car of Interest -->
+      <div id="page7" class="page">
+        <fieldset>
+          <legend class="section-title">What is your preferred car within the defined budget?</legend>
+          <select name="car" id="carSelect">
+            <option value="" disabled selected>Select Car</option>
+            <option value="Audi A1">Audi A1</option>
+            <option value="Audi A2">Audi A2</option>
+            <option value="Audi A3">Audi A3</option>
+            <option value="Audi A3 cabriolet">Audi A3 cabriolet</option>
+            <option value="Audi A4">Audi A4</option>
+            <option value="Audi A5">Audi A5</option>
+            <option value="Audi A6">Audi A6</option>
+            <option value="Audi A7">Audi A7</option>
+            <option value="Audi A8">Audi A8</option>
+            <option value="Audi e-tron">Audi e-tron</option>
+            <option value="Audi e-tron GT">Audi e-tron GT</option>
+            <option value="Audi Q1">Audi Q1</option>
+            <option value="Audi Q2">Audi Q2</option>
+            <option value="Audi Q3">Audi Q3</option>
+            <option value="Audi Q3 Sportback">Audi Q3 Sportback</option>
+            <option value="Audi Q4">Audi Q4</option>
+            <option value="Audi Q5">Audi Q5</option>
+            <option value="Audi Q6">Audi Q6</option>
+            <option value="Volvo XC 90">Volvo XC 90</option>
+            <option value="Volvo XC30">Volvo XC30</option>
+            <option value="Volvo XC40">Volvo XC40</option>
+            <option value="Volvo XC40 Recharge">Volvo XC40 Recharge</option>
+            <option value="Volvo XC60">Volvo XC60</option>
+            <!-- Add as many as you need -->
+          </select>
+          <br><br>
+          <button onclick="nextFromCar()">Next &raquo;</button>
+        </fieldset>
+      </div>
+
+      <!-- PAGE 8: Fuel Type -->
+      <div id="page8" class="page">
+        <fieldset>
+          <legend class="section-title">What fuel type do you prefer?</legend>
+          <label><input type="radio" name="fuel" value="Petrol"> Petrol</label><br>
+          <label><input type="radio" name="fuel" value="Diesel"> Diesel</label><br>
+          <label><input type="radio" name="fuel" value="CNG"> CNG</label><br>
+          <label><input type="radio" name="fuel" value="Hybrid"> Hybrid</label><br>
+          <label><input type="radio" name="fuel" value="EV"> EV</label><br><br>
+          <button onclick="goToFeatures()">Next &raquo;</button>
+        </fieldset>
+      </div>
+
+      <!-- PAGE 9: Select 5 Features -->
+      <div id="page9" class="page">
+        <fieldset>
+          <legend class="section-title">Please Select 5 Features you find important for your car purchase:</legend>
+          <p id="countText">You have selected 0 out of 5.</p>
+          <div class="featureBlocks">
+            <div id="checkboxesBlock1" class="featureBlock"></div>
+            <div id="checkboxesBlock2" class="featureBlock"></div>
+          </div>
+          <button onclick="goToPairwise()">Next &raquo;</button>
+        </fieldset>
+      </div>
+
+      <!-- PAGE 10: Pairwise Questions -->
+      <div id="page10" class="page">
+        <div id="pairsContainer"></div>
+        <button id="submitBtn" onclick="handleSubmit()">Submit</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOTTOM ORANGE SEGMENT -->
+  <div class="bottomOrangeSegment"></div>
+
+  <script>
+    /*******************************************************
+     * FORM DATA
+     *******************************************************/
+    const formData = {
+      age: "",
+      gender: "",
+      city: "",
+      buyingThisYear: "",
+      owner: "",
+      budget: "",
+      car: "",
+      fuel: "",
+      selectedFeatures: [],
+      pairwiseAnswers: [],
+    };
+
+    /*******************************************************
+     * PAGE NAVIGATION
+     *******************************************************/
+    function showPage(pageId) {
+      document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+      document.getElementById(pageId).classList.add("active");
+    }
+
+    // PAGE 1 => 2
+    function nextFromAge() {
+      const ageRadio = document.querySelector('input[name="age"]:checked');
+      if (!ageRadio) {
+        alert("Please select your age range.");
+        return;
+      }
+      formData.age = ageRadio.value;
+      showPage("page2");
+    }
+
+    // PAGE 2 => 3
+    function nextFromGender() {
+      const genderRadio = document.querySelector('input[name="gender"]:checked');
+      if (!genderRadio) {
+        alert("Please select your gender.");
+        return;
+      }
+      formData.gender = genderRadio.value;
+      showPage("page3");
+    }
+
+    // PAGE 3 => 4
+    function nextFromCity() {
+      const cityDropdown = document.getElementById("citySelect");
+      const selectedCity = cityDropdown.value.trim();
+
+      if (!selectedCity) {
+        alert("Please select your city.");
+        return;
+      }
+      // Validate that the selected city is in the dropdown
+      const validCities = Array.from(cityDropdown.options).map(opt => opt.value);
+      if (!validCities.includes(selectedCity)) {
+        alert("Please select a valid city from the list.");
+        cityDropdown.value = "";
+        cityDropdown.focus();
+        return;
+      }
+
+      formData.city = selectedCity;
+      showPage("page4");
+    }
+
+    // PAGE 4 => Next or Thank You
+    function checkBuyingThisYear() {
+      const buyingRadio = document.querySelector('input[name="buyingThisYear"]:checked');
+      if (!buyingRadio) {
+        alert("Please select Yes or No.");
+        return;
+      }
+      formData.buyingThisYear = buyingRadio.value;
+
+      if (buyingRadio.value === "Yes") {
+        showPage("page5"); // Ownership
+      } else {
+        // Show Thank You page & end
+        showPage("pageThankYou");
+      }
+    }
+
+    // PAGE 5 => 6
+    function nextFromOwner() {
+      const ownerRadio = document.querySelector('input[name="owner"]:checked');
+      if (!ownerRadio) {
+        alert("Please select car ownership (Yes or No).");
+        return;
+      }
+      formData.owner = ownerRadio.value;
+      showPage("page6");
+    }
+
+    // PAGE 6 => 7
+    function nextFromBudget() {
+      const budgetRadio = document.querySelector('input[name="budget"]:checked');
+      if (!budgetRadio) {
+        alert("Please select your budget range.");
+        return;
+      }
+      formData.budget = budgetRadio.value;
+      showPage("page7");
+    }
+
+    // PAGE 7 => 8
+    function nextFromCar() {
+      const carDropdown = document.getElementById("carSelect");
+      const selectedCar = carDropdown.value.trim();
+
+      if (!selectedCar) {
+        alert("Please select a valid car.");
+        return;
+      }
+      const validCars = Array.from(carDropdown.options).map(opt => opt.value);
+      if (!validCars.includes(selectedCar)) {
+        alert("Please select a valid car from the list.");
+        carDropdown.value = "";
+        carDropdown.focus();
+        return;
+      }
+
+      formData.car = selectedCar;
+      showPage("page8");
+    }
+
+    // PAGE 8 => 9
+    function goToFeatures() {
+      const fuelRadio = document.querySelector('input[name="fuel"]:checked');
+      if (!fuelRadio) {
+        alert("Please select your preferred fuel type.");
+        return;
+      }
+      formData.fuel = fuelRadio.value;
+      showPage("page9");
+    }
+
+    /*******************************************************
+     * FEATURES (PAGE 9)
+     *******************************************************/
+    let selectedCount = 0;
+    const maxCheckboxes = 5;
+    let selectedOptions = [];
+
+    // Our 30 features
+    const checkboxOptions = [
+      "Automatic Climate Control",
+      "Keyless Entry and Ignition",
+      "Rear AC Vents",
+      "Rear Seat Comfort (Legroom and Headroom)",
+      "Steering Reach and Height Adjustment (Tilt and Telescopic steering wheel)",
+      "360 View Camera",
+      "ADAS (Advanced Driver Assistance System)- Lane Keep Assist, Adaptive Cruise Control etc.",
+      "Automatic Headlamps and Wipers",
+      "Cruise Control",
+      "Parking Sensors",
+      "4 Wheel Drive / All-Wheel Drive",
+      "Automatic Transmission",
+      "High Engine Power Output",
+      "Digital Drivers Display (Odometer, Speedometer)",
+      "Car Mobile App Connectivity",
+      "Android Auto, Apple CarPlay: In-vehicle Infotainment",
+      "Touchscreen Infotainment Screen",
+      "Automated Electronic Tailgate",
+      "Electric Seat Adjustment",
+      "Sunroof",
+      "Ventilated Seats",
+      "High Mileage (Fuel Efficiency)",
+      "Idle Engine Automatic Stop/Start",
+      "Low Service Costs",
+      "Resale Value",
+      "6(+) Airbags",
+      "Hill Assist and Hill Hold Control",
+      "ISOFIX Child Seat Mounts",
+      "Traction Control",
+      "Tire Pressure Monitoring System (TPMS)"
+    ];
+
+    // Shuffle them up randomly
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+    shuffle(checkboxOptions);
+
+    // Split into two columns
+    const block1 = checkboxOptions.slice(0, 15);
+    const block2 = checkboxOptions.slice(15);
+
+    // Render features into 2 blocks
+    const block1Container = document.getElementById("checkboxesBlock1");
+    const block2Container = document.getElementById("checkboxesBlock2");
+
+    block1.forEach((feature, index) => {
+      const label = document.createElement("label");
+      label.className = "option-label";
+      label.innerHTML = `
+        <input
+          class="option-label-checkbox"
+          type="checkbox"
+          name="option"
+          onclick="updateCheckboxCount(this)"
+        />
+        <span class="option-label-number">${index + 1}. </span>
+        <span class="option-label-text">${feature}</span>
+      `;
+      block1Container.appendChild(label);
+    });
+
+    block2.forEach((feature, index) => {
+      const label = document.createElement("label");
+      label.className = "option-label";
+      label.innerHTML = `
+        <input
+          class="option-label-checkbox"
+          type="checkbox"
+          name="option"
+          onclick="updateCheckboxCount(this)"
+        />
+        <span class="option-label-number">${index + 16}. </span>
+        <span class="option-label-text">${feature}</span>
+      `;
+      block2Container.appendChild(label);
+    });
+
+    function updateCheckboxCount(checkbox) {
+      if (checkbox.checked) {
+        selectedCount++;
+        if (selectedCount > maxCheckboxes) {
+          checkbox.checked = false;
+          selectedCount--;
+          alert(`You can only select up to ${maxCheckboxes} features.`);
+          return;
+        }
+      } else {
+        selectedCount--;
+      }
+      document.getElementById("countText").textContent =
+        `You have selected ${selectedCount} out of ${maxCheckboxes}. Please select exactly ${maxCheckboxes}.`;
+
+      if (selectedCount >= maxCheckboxes) {
+        disableRemainingCheckboxes();
+      } else {
+        enableAllCheckboxes();
+      }
+    }
+
+    function disableRemainingCheckboxes() {
+      document.querySelectorAll('input[name="option"]').forEach(cb => {
+        if (!cb.checked) cb.disabled = true;
+      });
+    }
+
+    function enableAllCheckboxes() {
+      document.querySelectorAll('input[name="option"]').forEach(cb => {
+        cb.disabled = false;
+      });
+    }
+
+    function collectSelectedOptions() {
+      selectedOptions = [];
+      document.querySelectorAll('input[name="option"]').forEach(cb => {
+        if (cb.checked) {
+          const text = cb.parentNode.querySelector(".option-label-text").textContent;
+          selectedOptions.push(text.trim());
+        }
+      });
+      formData.selectedFeatures = selectedOptions;
+    }
+
+    /*******************************************************
+     * PAGE 9 => 10 (Pairwise)
+     *******************************************************/
+    function goToPairwise() {
+      if (selectedCount !== maxCheckboxes) {
+        alert(`Please select exactly ${maxCheckboxes} features before proceeding.`);
+        return;
+      }
+      collectSelectedOptions();
+
+      // Generate random pairs
+      const randomPairs = generateRandomPairs(selectedOptions);
+      displayPairs(randomPairs);
+
+      showPage("page10");
+    }
+
+    // Function to generate random pairs
+    function generateRandomPairs(options) {
+      let pairs = [];
+      let temp = [...options];
+      while (temp.length >= 2) {
+        const idx1 = Math.floor(Math.random() * temp.length);
+        const option1 = temp.splice(idx1, 1)[0];
+        const idx2 = Math.floor(Math.random() * temp.length);
+        const option2 = temp.splice(idx2, 1)[0];
+        pairs.push([option1, option2]);
+      }
+      // If there's an odd option left, pair it with a random existing pair
+      if (temp.length === 1) {
+        const randomPair = pairs[Math.floor(Math.random() * pairs.length)];
+        randomPair.push(temp[0]);
+      }
+      return pairs;
+    }
+
+    /*******************************************************
+     * PAIRWISE (PAGE 10)
+     *******************************************************/
+    let pairs = [];
+    let currentPairIndex = 0;
+
+    function displayPairs(randomPairs) {
+      pairs = randomPairs || [];
+      formData.pairwiseAnswers = new Array(pairs.length);
+      currentPairIndex = 0;
+      showPair(currentPairIndex);
+    }
+
+    function showPair(i) {
+      const container = document.getElementById("pairsContainer");
+      container.innerHTML = ""; // Clear previous question
+
+      // If we've answered all pairs, show the final message + Submit button
+      if (i >= pairs.length) {
+        container.innerHTML = `
+          <h5 style="text-align: center;">
+            We appreciate you taking the time to share your valuable insights.
+            Your feedback will help us improve and shape the future of the automotive industry.
+            Stay tuned for updates and insights based on your contributions!
+            Have a great day!
+          </h5>
+        `;
+        document.getElementById("submitBtn").style.display = "inline-block";
+        return;
+      }
+
+      const pair = pairs[i];
+      const div = document.createElement("div");
+      div.className = "question-container";
+      div.innerHTML = `
+        <p>Of your 5 selected features, choose the more important one in each pair below:</p>
+        <label>
+          <input type="radio" name="pair${i}" value="${encodeURIComponent(pair[0])}"
+            onchange="recordAnswer(${i}, '${escapeQuotes(pair[0])}')">
+          ${pair[0]}
+        </label>
+        <label>
+          <input type="radio" name="pair${i}" value="${encodeURIComponent(pair[1])}"
+            onchange="recordAnswer(${i}, '${escapeQuotes(pair[1])}')">
+          ${pair[1]}
+        </label>
+      `;
+      container.appendChild(div);
+    }
+
+    function escapeQuotes(str) {
+      return str.replace(/'/g, "\\'");
+    }
+
+    function recordAnswer(index, answer) {
+      formData.pairwiseAnswers[index] = answer;
+      currentPairIndex++;
+      showPair(currentPairIndex);
+    }
+
+    /*******************************************************
+     * FINAL SUBMISSION
+     *******************************************************/
+    function handleSubmit() {
+      // Check features
+      if (formData.selectedFeatures.length !== maxCheckboxes) {
+        alert(`Please select exactly ${maxCheckboxes} features.`);
+        return;
+      }
+
+      // Check pairwise completeness
+      if (formData.pairwiseAnswers.includes(undefined)) {
+        alert("Please answer all pairwise comparisons.");
+        return;
+      }
+
+      // Add a timestamp (optional, since Apps Script also adds one)
+      formData.timestamp = new Date().toISOString();
+
+      // Define the Web App URL
+      const webAppURL = 'https://script.google.com/macros/s/YOUR_DEPLOYMENT_ID/exec'; // <-- Replace with your Web App URL
+
+      // Send data to the Google Apps Script Web App
+      fetch(webAppURL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+      })
+        .then(response => response.json())
+        .then(data => {
+          if (data.result === 'success') {
+            alert("Form submitted successfully!");
+            location.reload();
+          } else {
+            throw new Error(data.error);
+          }
+        })
+        .catch((error) => {
+          console.error('Error!', error.message);
+          alert("There was an error submitting the form. Please try again.");
+        });
+    }
+
+    /*******************************************************
+     * INITIALIZATION
+     *******************************************************/
+    $(document).ready(function () {
+      $('#citySelect').select2({
+        placeholder: "Select your city",
+        allowClear: true
+      });
+      $('#carSelect').select2({
+        placeholder: "Select Car",
+        allowClear: true
+      });
+
+      // Attach event listeners for radio buttons (optional if using buttons)
+      // You can uncomment these if you prefer automatic navigation on selection
+      /*
+      document.querySelectorAll('input[name="age"]').forEach(input => {
+        input.addEventListener('change', nextFromAge);
+      });
+      document.querySelectorAll('input[name="gender"]').forEach(input => {
+        input.addEventListener('change', nextFromGender);
+      });
+      document.querySelectorAll('input[name="buyingThisYear"]').forEach(input => {
+        input.addEventListener('change', checkBuyingThisYear);
+      });
+      document.querySelectorAll('input[name="owner"]').forEach(input => {
+        input.addEventListener('change', nextFromOwner);
+      });
+      document.querySelectorAll('input[name="budget"]').forEach(input => {
+        input.addEventListener('change', nextFromBudget);
+      });
+      document.querySelectorAll('input[name="fuel"]').forEach(input => {
+        input.addEventListener('change', goToFeatures);
+      });
+      */
+    });
+  </script>
 </body>
 
 </html>
